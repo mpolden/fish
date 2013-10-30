@@ -122,7 +122,7 @@ func Base64Decode(src []byte) []byte {
 func Encrypt(key string, message string) (string, error) {
     enc, err := blowfishEncrypt(key, pad([]byte(message), 8))
     if err != nil {
-        return "", nil
+        return "", err
     }
     return "+OK " + Base64Encode(enc), nil
 }
