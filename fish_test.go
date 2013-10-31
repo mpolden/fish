@@ -2,6 +2,16 @@ package fish
 
 import "testing"
 
+func Test_Base64Encode_Mod8(t *testing.T) {
+    src := "egg spam"
+    expected := "H34qN/uqQnz/"
+
+    enc := Base64Encode([]byte(src))
+    if enc != expected {
+        t.Fatalf("%s != %s", expected, enc)
+    }
+}
+
 func Test_Base64Encode(t *testing.T) {
     src := "The quick brown fox jumps over the lazy dog"
     expected := "xzkrL/ui4oi/uSQrJ/M746F/KPkrE/uuRpA/O/wqz/QX46N/uyBsv/G/" +
@@ -14,6 +24,16 @@ func Test_Base64Encode(t *testing.T) {
 
     if len(Base64Encode([]byte(""))) != 0 {
         t.Fatalf("Expected empty string")
+    }
+}
+
+func Test_Base64Decode_Mod8(t *testing.T) {
+    src := "H34qN/uqQnz/"
+    expected := "egg spam"
+
+    dec := Base64Decode([]byte(src))
+    if string(dec) != expected {
+        t.Fatalf("%s != %s", expected, dec)
     }
 }
 
