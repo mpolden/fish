@@ -40,6 +40,8 @@ func blowfishDecrypt(key string, src []byte) ([]byte, error) {
     return bytes.TrimRight(dst, "\x00"), nil
 }
 
+// Base64Encode returns a custom base64 encoding of src. If the size of src is
+// not a multiple of 8, src will be padded with \x00 bytes
 func Base64Encode(src []byte) string {
     charset := "./0123456789abcdefghijklmnopqrstuvwxyz" +
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -53,8 +55,7 @@ func Base64Encode(src []byte) string {
     k := -1
     var v int
 
-    n := 0
-    for k < len(src)-1 {
+    for n := 0; k < len(src)-1; {
         for _, count := range []uint8{24, 16, 8, 0} {
             k++
             v = int(src[k])
@@ -79,6 +80,7 @@ func Base64Encode(src []byte) string {
     return string(buf)
 }
 
+// Base64Decode returns the bytes represented by base64 src
 func Base64Decode(src []byte) []byte {
     charset := []byte("./0123456789abcdefghijklmnopqrstuvwxyz" +
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -86,8 +88,7 @@ func Base64Decode(src []byte) []byte {
     buf := make([]byte, len(src)/3*2)
     k := -1
 
-    n := 0
-    for k < len(src)-1 {
+    for n := 0; k < len(src)-1; {
         left := 0
         right := 0
         var v int
@@ -104,13 +105,13 @@ func Base64Decode(src []byte) []byte {
             left |= v << (i * 6)
         }
         for i := uint8(0); i < 4; i++ {
-            w = (left & (0xFF << ((3 - i) * 8)))
+            w = left & (0xFF << ((3 - i) * 8))
             z = w >> ((3 - i) * 8)
             buf[n] = byte(z)
             n++
         }
         for i := uint8(0); i < 4; i++ {
-            w = (right & (0xFF << ((3 - i) * 8)))
+            w = right & (0xFF << ((3 - i) * 8))
             z = w >> ((3 - i) * 8)
             buf[n] = byte(z)
             n++
@@ -119,6 +120,8 @@ func Base64Decode(src []byte) []byte {
     return buf
 }
 
+// Encrypt returns the given message encrypted using key. If the size of
+// message is not a multiple of 8, message will be padded with \x00 bytes.
 func Encrypt(key string, message string) (string, error) {
     enc, err := blowfishEncrypt(key, pad([]byte(message), 8))
     if err != nil {
@@ -127,10 +130,13 @@ func Encrypt(key string, message string) (string, error) {
     return "+OK " + Base64Encode(enc), nil
 }
 
+// IsEncrypted returns true if the s has a valid encryption prefix.
 func IsEncrypted(s string) bool {
     return strings.HasPrefix(s, "+OK ") || strings.HasPrefix(s, "mcps ")
 }
 
+// Decrypt returns the given message decrypted using key. If message does not
+// have any encryption prefix, the message is returned unmodified.
 func Decrypt(key string, message string) (string, error) {
     if strings.HasPrefix(message, "+OK ") {
         message = message[4:]
