@@ -52,28 +52,20 @@ func Base64Encode(src []byte) string {
     buf := make([]byte, len(src)/2*3)
     left := 0
     right := 0
-    k := -1
-    var v int
 
-    for n := 0; k < len(src)-1; {
-        for _, count := range []uint8{24, 16, 8, 0} {
-            k++
-            v = int(src[k])
-            left += v << count
+    for j, k := 0, 0; k < len(src); {
+        for i := 24; i >= 0; i, k = i-8, k+1 {
+            left += int(src[k]) << uint8(i)
         }
-        for _, count := range []uint8{24, 16, 8, 0} {
-            k++
-            v = int(src[k])
-            right += v << count
+        for i := 24; i >= 0; i, k = i-8, k+1 {
+            right += int(src[k]) << uint8(i)
         }
-        for i := 0; i < 6; i++ {
-            buf[n] = charset[right&0x3F]
-            n++
+        for i := 0; i < 6; i, j = i+1, j+1 {
+            buf[j] = charset[right&0x3F]
             right >>= 6
         }
-        for i := 0; i < 6; i++ {
-            buf[n] = charset[left&0x3F]
-            n++
+        for i := 0; i < 6; i, j = i+1, j+1 {
+            buf[j] = charset[left&0x3F]
             left >>= 6
         }
     }
@@ -86,35 +78,27 @@ func Base64Decode(src []byte) []byte {
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
     buf := make([]byte, len(src)/3*2)
-    k := -1
 
-    for n := 0; k < len(src)-1; {
+    for j, k := 0, 0; k < len(src); {
         left := 0
         right := 0
-        var v int
-        var w int
-        var z int
-        for i := uint8(0); i < 6; i++ {
-            k++
-            v = bytes.IndexByte(charset, src[k])
+        for i := uint8(0); i < 6; i, k = i+1, k+1 {
+            v := bytes.IndexByte(charset, src[k])
             right |= v << (i * 6)
         }
-        for i := uint8(0); i < 6; i++ {
-            k++
-            v = bytes.IndexByte(charset, src[k])
+        for i := uint8(0); i < 6; i, k = i+1, k+1 {
+            v := bytes.IndexByte(charset, src[k])
             left |= v << (i * 6)
         }
-        for i := uint8(0); i < 4; i++ {
-            w = left & (0xFF << ((3 - i) * 8))
-            z = w >> ((3 - i) * 8)
-            buf[n] = byte(z)
-            n++
+        for i := uint8(0); i < 4; i, j = i+1, j+1 {
+            w := left & (0xFF << ((3 - i) * 8))
+            z := w >> ((3 - i) * 8)
+            buf[j] = byte(z)
         }
-        for i := uint8(0); i < 4; i++ {
-            w = right & (0xFF << ((3 - i) * 8))
-            z = w >> ((3 - i) * 8)
-            buf[n] = byte(z)
-            n++
+        for i := uint8(0); i < 4; i, j = i+1, j+1 {
+            w := right & (0xFF << ((3 - i) * 8))
+            z := w >> ((3 - i) * 8)
+            buf[j] = byte(z)
         }
     }
     return buf
