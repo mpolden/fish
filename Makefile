@@ -1,17 +1,10 @@
-all: fmt lint test
+all: test
 
 fmt:
-	gofmt -tabs=false -tabwidth=4 -w=true *.go
-
-lint:
-	go vet *.go
-	test -x bin/golint && ./bin/golint *.go
+	gofmt -w=true *.go
 
 deps:
-	go get code.google.com/p/go.crypto/blowfish
-
-deps-dev:
-	go get github.com/golang/lint/golint
+	go get -d
 
 test:
 	go test
