@@ -2,7 +2,7 @@ package fish
 
 import (
 	"bytes"
-	"code.google.com/p/go.crypto/blowfish"
+	"golang.org/x/crypto/blowfish"
 	"strings"
 )
 
