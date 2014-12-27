@@ -1,10 +1,10 @@
-all: test
+all: deps test
 
 fmt:
-	gofmt -w=true *.go
-
-deps:
-	go get -d
+	go fmt
 
 test:
 	go test
+
+deps:
+	go get -d -v
