@@ -31,9 +31,19 @@ func Test_Base64Decode_Mod8(t *testing.T) {
 	src := "H34qN/uqQnz/"
 	expected := "egg spam"
 
-	dec := Base64Decode([]byte(src))
+	dec, err := Base64Decode([]byte(src))
+	if err != nil {
+		t.Fatal(err)
+	}
 	if string(dec) != expected {
 		t.Fatalf("%s != %s", expected, dec)
+	}
+}
+
+func Test_Base64Decode_Invalid(t *testing.T) {
+	src := []byte("foo")
+	if _, err := Base64Decode(src); err == nil {
+		t.Fatal(err)
 	}
 }
 
@@ -43,12 +53,19 @@ func Test_Base64Decode(t *testing.T) {
 	expected := "The quick brown fox jumps over the lazy dog" +
 		"\x00\x00\x00\x00\x00"
 
-	dec := Base64Decode([]byte(src))
+	dec, err := Base64Decode([]byte(src))
+	if err != nil {
+		t.Fatal(err)
+	}
 	if string(dec) != expected {
 		t.Fatalf("%s != %s", expected, dec)
 	}
 
-	if len(Base64Decode([]byte(""))) != 0 {
+	b, err := Base64Decode([]byte{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(b) != 0 {
 		t.Fatalf("Expected empty string")
 	}
 }
@@ -120,5 +137,12 @@ func Test_Decrypt_McpsPrefix(t *testing.T) {
 	}
 	if actual != expected {
 		t.Fatalf("%s != %s", actual, expected)
+	}
+}
+
+func Test_Decrypt_Invalid(t *testing.T) {
+	src := "+OK foo"
+	if _, err := Decrypt("", src); err == nil {
+		t.Fatal(err)
 	}
 }

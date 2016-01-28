@@ -2,8 +2,10 @@ package fish
 
 import (
 	"bytes"
-	"golang.org/x/crypto/blowfish"
+	"fmt"
 	"strings"
+
+	"golang.org/x/crypto/blowfish"
 )
 
 func pad(src []byte, mod int) []byte {
@@ -73,7 +75,10 @@ func Base64Encode(src []byte) string {
 }
 
 // Base64Decode returns the bytes represented by base64 src
-func Base64Decode(src []byte) []byte {
+func Base64Decode(src []byte) ([]byte, error) {
+	if len(src) > 0 && len(src) < 12 {
+		return nil, fmt.Errorf("invalid base64 input: %s", src)
+	}
 	charset := []byte("./0123456789abcdefghijklmnopqrstuvwxyz" +
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
@@ -101,7 +106,7 @@ func Base64Decode(src []byte) []byte {
 			buf[j] = byte(z)
 		}
 	}
-	return buf
+	return buf, nil
 }
 
 // Encrypt returns the given message encrypted using key. If the size of
@@ -129,7 +134,11 @@ func Decrypt(key string, message string) (string, error) {
 	} else {
 		return message, nil
 	}
-	dec, err := blowfishDecrypt(key, Base64Decode([]byte(message)))
+	b, err := Base64Decode([]byte(message))
+	if err != nil {
+		return "", err
+	}
+	dec, err := blowfishDecrypt(key, b)
 	if err != nil {
 		return "", err
 	}
