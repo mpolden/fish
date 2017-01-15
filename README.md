@@ -1,14 +1,14 @@
-go-fish
+fish
 =======
 
-[![Build Status](https://travis-ci.org/martinp/go-fish.svg)](https://travis-ci.org/martinp/go-fish)
+[![Build Status](https://travis-ci.org/martinp/fish.svg)](https://travis-ci.org/martinp/fish)
 
 Implementation of FiSH IRC encryption in Go.
 
 Installation
 ============
 
-    go get github.com/martinp/go-fish
+    go get github.com/martinp/fish
 
 Usage
 =====
@@ -18,7 +18,7 @@ Basic example:
 package main
 
 import (
-    "github.com/martinp/go-fish"
+    "github.com/martinp/fish"
     "log"
 )
 
