@@ -1,7 +1,7 @@
 fish
 =======
 
-[![Build Status](https://travis-ci.org/martinp/fish.svg)](https://travis-ci.org/martinp/fish)
+[![Build Status](https://travis-ci.org/mpolden/fish.svg)](https://travis-ci.org/mpolden/fish)
 
 Implementation of FiSH IRC encryption in Go.
 
