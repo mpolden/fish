@@ -8,7 +8,7 @@ Implementation of FiSH IRC encryption in Go.
 Installation
 ============
 
-    go get github.com/martinp/fish
+    go get github.com/mpolden/fish
 
 Usage
 =====
@@ -18,7 +18,7 @@ Basic example:
 package main
 
 import (
-    "github.com/martinp/fish"
+    "github.com/mpolden/fish"
     "log"
 )
 
